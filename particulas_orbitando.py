@@ -1,3 +1,4 @@
+from turtle import distance
 from manim import *
 class Elipse(Ellipse):
     CONFIG={
@@ -28,13 +29,12 @@ class ParticlesScene(Scene):
         elipse2=Elipse().move_to(2*LEFT)
         animation1=elipse1.get_dot(invert=True)
         animation2=elipse2.get_dot()
-        line=always_redraw(
-            lambda: Line(
-                elipse1.dot,
-                elipse2.dot
-            )
-        )
-        self.add(elipse1,elipse2,line)
+        line=Line(elipse1.dot,elipse2.dot).add_updater(lambda t: t.become(Line(elipse1.dot, elipse2.dot)))
+        distance_line=DecimalNumber(line.get_length()).next_to(VGroup(elipse1,elipse2),DOWN,buff=1)
+        def update_number(num):
+            num.set_value(line.get_length())
+        distance_line.add_updater(update_number)
+        self.add(elipse1,elipse2,line,distance_line)
         count=0
         while count<11:
             count+=1
